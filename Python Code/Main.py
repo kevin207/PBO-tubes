@@ -1,4 +1,5 @@
 import mysql.connector
+import random
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
@@ -8,11 +9,18 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 class Customers:
-    def __init__(self,customer_id,name,address,phone):
+    def __init__(self,customer_id,name,address,email,phone):
         self.customer_id = customer_id
         self.name = name
         self.address = address
+        self.email = email
         self.phone = phone
+    
+    def insert_data(self):
+        order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.email}\',\'{self.phone}\')'
+        mycursor.execute(order)
+        mydb.commit()
+        print("Account has been created")
 
 class Accounts(Customers):
     def __init__(self, customer_id, account_id,type,balance):
@@ -55,7 +63,7 @@ class Customers_Interface:
                 Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
                 if Option == 1:
                     loop = False
-                    pass
+                    Customers_Interface.New_Customer()
                 elif Option == 2:
                     loop = False
                     pass
@@ -65,7 +73,43 @@ class Customers_Interface:
                     print("Please input Integer")
 
     def New_Customer():
-        pass
+        print("\nInput the following data")
+        temp_1 = "CS" + str(random.randint(10100,10199))
+        temp_2 = input("Name : ")
+        temp_3 = input("Address : ")
+        temp_4 = input("Email : ")
+        temp_5 = input("Phone : ")
+        customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
+        customer.insert_data()
+
+    def Existing_Customer():
+        loop = True
+        while loop:
+            print("\nInput the following data")
+            temp_1 = input("Customer ID : ")
+            #Verify
+            Verify = None
+            mycursor.execute(f'SELECT Customer_ID FROM Customers where Customer_ID = (\'{temp_1}\')')
+            Verify = mycursor.fetchall()
+            if not Verify == None:
+                loop = False
+                #Fetch Name
+                mycursor.execute(f'SELECT Name FROM Customers where Customer_ID = (\'{temp_1}\')')
+                temp_2 = mycursor.fetchall()
+                #Fetch address
+                mycursor.execute(f'SELECT address FROM Customers where Customer_ID = (\'{temp_1}\')')
+                temp_3 = mycursor.fetchall()
+                #Fetch Email
+                mycursor.execute(f'SELECT Email FROM Customers where Customer_ID = (\'{temp_1}\')')
+                temp_4 = mycursor.fetchall()
+                #Fetch Phone
+                mycursor.execute(f'SELECT Phone FROM Customers where Customer_ID = (\'{temp_1}\')')
+                temp_5 = mycursor.fetchall()
+                customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
+            else:
+                print("Cannot find the designated Customer ID")
+        
+
 
 class Admin_Interface:
     def User_Admin():
