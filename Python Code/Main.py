@@ -14,6 +14,8 @@ class Customers:
         self.address = address
         self.phone = phone
 
+    def save_to_database(self):
+        pass
 class Accounts(Customers):
     def __init__(self, customer_id, account_id,type,balance):
         super().__init__(customer_id)
@@ -45,13 +47,30 @@ class AccountTransactions(Accounts):
         self.amount =amount
 
 def User_Customer():
+    loop = True
+    while loop:
+        try:
+            print("\n")
+            Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
+            if Option == 1:
+                loop = False
+                pass
+            elif Option == 2:
+                loop = False
+                pass
+            else:
+                print("Wrong input")
+        except ValueError:
+                print("Please input Integer")
+
+def New_Customer():
     pass
 
 def User_Admin():
     pass
 
-login_attempt = True
-while login_attempt:
+loop = True
+while loop:
     try:
         User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n>"))
         if User_type == 1:
@@ -61,6 +80,6 @@ while login_attempt:
             login_attempt = False
             User_Admin()
         else:
-            print("wrong input")
+            print("Wrong input")
     except ValueError:
         print("Please input Integer")
