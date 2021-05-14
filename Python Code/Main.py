@@ -22,8 +22,10 @@ class Accounts(Customers):
         self.balance = balance
 
 class CheckingAccounts(Accounts):
-    def __init__(self, customer_id, account_id, type, balance):
+    def __init__(self, customer_id, account_id, type, balance,credit_limit,fee):
         super().__init__(customer_id, account_id, type, balance)
+        self.credit_limit = credit_limit
+        self.fee = fee
 
 class SavingAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,interest_rate):
