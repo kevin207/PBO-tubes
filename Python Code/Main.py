@@ -17,10 +17,10 @@ class Customers:
         self.phone = phone
     
     def insert_data(self):
-        order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.email}\',\'{self.phone}\')'
+        order = f'insert into accounts values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.email}\',\'{self.phone}\')'
         mycursor.execute(order)
         mydb.commit()
-        print("Account has been created")
+        print("New Customer has been created")
 
 class Accounts(Customers):
     def __init__(self, customer_id, account_id,type,balance):
@@ -29,16 +29,36 @@ class Accounts(Customers):
         self.type = type
         self.balance = balance
 
+    def insert_data(self):
+        order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
+        mycursor.execute(order)
+        mydb.commit()
+        print("Account has been created")
+
 class CheckingAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,credit_limit,fee):
         super().__init__(customer_id, account_id, type, balance)
         self.credit_limit = credit_limit
         self.fee = fee
 
+    def insert_data(self):
+        order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
+        mycursor.execute(order)
+        mydb.commit()
+        print("Checking Account has been created")
+
+
 class SavingAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,interest_rate):
         super().__init__(customer_id, account_id, type, balance)
         self.interest_rate = interest_rate
+
+    def insert_data(self):
+        order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
+        mycursor.execute(order)
+        mydb.commit()
+        print("Saving Account has been created")
+
 
 class LoanAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,principal_amount,interest_rate,loan_duration):
@@ -46,6 +66,13 @@ class LoanAccounts(Accounts):
         self.principal_amount = principal_amount
         self.interest_rate = interest_rate
         self.loan_duration = loan_duration
+
+    def insert_data(self):
+        order = f'insert into customers values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
+        mycursor.execute(order)
+        mydb.commit()
+        print("Loan Account has been created")
+
 
 class AccountTransactions(Accounts):
     def __init__(self, account_id,date,trans_type,amount):
@@ -66,7 +93,7 @@ class Customers_Interface:
                     Customers_Interface.New_Customer()
                 elif Option == 2:
                     loop = False
-                    pass
+                    Customers_Interface.Existing_Customer()
                 else:
                     print("Wrong input")
             except ValueError:
@@ -90,26 +117,70 @@ class Customers_Interface:
             #Verify
             Verify = None
             mycursor.execute(f'SELECT Customer_ID FROM Customers where Customer_ID = (\'{temp_1}\')')
-            Verify = mycursor.fetchall()
+            result = mycursor.fetchall()
+            for x in result:
+                Verify = x[0]
             if not Verify == None:
+                print("Login Success")
                 loop = False
                 #Fetch Name
                 mycursor.execute(f'SELECT Name FROM Customers where Customer_ID = (\'{temp_1}\')')
-                temp_2 = mycursor.fetchall()
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_2 = x[0]
                 #Fetch address
                 mycursor.execute(f'SELECT address FROM Customers where Customer_ID = (\'{temp_1}\')')
-                temp_3 = mycursor.fetchall()
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_3 = x[0]
                 #Fetch Email
                 mycursor.execute(f'SELECT Email FROM Customers where Customer_ID = (\'{temp_1}\')')
-                temp_4 = mycursor.fetchall()
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_4 = x[0]
                 #Fetch Phone
                 mycursor.execute(f'SELECT Phone FROM Customers where Customer_ID = (\'{temp_1}\')')
-                temp_5 = mycursor.fetchall()
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_5 = x[0]
                 customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
+                Customers_Interface.New_Account(customer)
             else:
                 print("Cannot find the designated Customer ID")
+    
+    def New_Account(customer):
+        loop = True
+        print("\nInput the following data")
+        temp_1 = "AC" + str(random.randint(10100,10199))
+        temp_2 = customer.customer_id
+        while loop:
+            try:
+                Account_option = int(input("Choose Account Type\n1.Checking | 2.Saving | 3.Loan\n>"))
+                if Account_option == 1:
+                    loop = False
+                    temp_3 = "Checking"
+                elif Account_option == 2:
+                    loop = False
+                    temp_3 = "Saving"
+                elif Account_option == 3:
+                    loop = False
+                    temp_3 = "Loan"
+                else:
+                    print("Wrong input")
+            except ValueError:
+                print("Please input integer")
         
-
+        temp_4 = ""
+        if temp_3 == 1:
+            account = CheckingAccounts(temp_1,temp_2,temp_3,temp_4,None,None)
+            account.insert_data()
+        elif temp_3 == 2:
+            account = SavingAccounts(temp_1,temp_2,temp_3,temp_4,None)
+            account.insert_data()
+        elif temp_3 == 3:
+            account = LoanAccounts(temp_1,temp_2,temp_3,temp_4,None,None,None)
+            account.insert_data()
+        
 
 class Admin_Interface:
     def User_Admin():
