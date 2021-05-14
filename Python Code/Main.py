@@ -14,8 +14,6 @@ class Customers:
         self.address = address
         self.phone = phone
 
-    def save_to_database(self):
-        pass
 class Accounts(Customers):
     def __init__(self, customer_id, account_id,type,balance):
         super().__init__(customer_id)
