@@ -5,6 +5,7 @@ mydb = mysql.connector.connect(
   database ="banktera"
 )
 
+#abcde
 mycursor = mydb.cursor()
 
 class Customers:
