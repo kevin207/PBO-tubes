@@ -22,9 +22,9 @@ class Customers:
         mydb.commit()
         print("New Customer has been created")
 
-class Accounts(Customers):
+class Accounts():
     def __init__(self, customer_id, account_id,type,balance):
-        super().__init__(customer_id)
+        self.customer_id = customer_id
         self.account_id = account_id
         self.type = type
         self.balance = balance
@@ -101,7 +101,8 @@ class Customers_Interface:
 
     def New_Customer():
         print("\nInput the following data")
-        temp_1 = "CS" + str(random.randint(10100,10199))
+        temp_1 = "CS" + str(random.randint(101000,101999))
+        print(temp_1)
         temp_2 = input("Name : ")
         temp_3 = input("Address : ")
         temp_4 = input("Email : ")
@@ -144,14 +145,30 @@ class Customers_Interface:
                 for x in result:
                     temp_5 = x[0]
                 customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
-                Customers_Interface.New_Account(customer)
+                Customers_Interface.User_Account(customer)
             else:
                 print("Cannot find the designated Customer ID")
+
+    def User_Account(customer):
+        loop = True
+        while loop:
+            try:
+                print("\n")
+                Option = int(input("New Account?\n1. Yes | 2. No\n>"))
+                if Option == 1:
+                    loop = False
+                    Customers_Interface.New_Account(customer)
+                elif Option == 2:
+                    loop = False
+                    Customers_Interface.Existing_Account()
+                else:
+                    print("Wrong input")
+            except ValueError:
+                    print("Please input Integer")
     
     def New_Account(customer):
         loop = True
         print("\nInput the following data")
-        temp_1 = "AC" + str(random.randint(10100,10199))
         temp_2 = customer.customer_id
         while loop:
             try:
@@ -171,15 +188,58 @@ class Customers_Interface:
                 print("Please input integer")
         
         temp_4 = ""
-        if temp_3 == 1:
-            account = CheckingAccounts(temp_1,temp_2,temp_3,temp_4,None,None)
+        if Account_option == 1:
+            temp_1 = "ACCA" + str(random.randint(1000,1999))
+            account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None,None)
             account.insert_data()
-        elif temp_3 == 2:
-            account = SavingAccounts(temp_1,temp_2,temp_3,temp_4,None)
+        elif Account_option == 2:
+            temp_1 = "ACSA" + str(random.randint(1000,1999))
+            account = SavingAccounts(temp_2,temp_1,temp_3,temp_4,None)
             account.insert_data()
-        elif temp_3 == 3:
-            account = LoanAccounts(temp_1,temp_2,temp_3,temp_4,None,None,None)
+        elif Account_option == 3:
+            temp_1 = "ACLA" + str(random.randint(1000,1999))
+            account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
             account.insert_data()
+        else:
+            print("something went wrong")
+        
+    def Existing_Account():
+        loop = True
+        while loop:
+            print("\nInput the following data")
+            temp_1 = input("Account ID : ")
+            #Verify
+            Verify = None
+            mycursor.execute(f'SELECT Account_ID FROM Accounts where Account_ID = (\'{temp_1}\')')
+            result = mycursor.fetchall()
+            for x in result:
+                Verify = x[0]
+            if not Verify == None:
+                print("Login Success")
+                loop = False
+                #Fetch Customer ID
+                mycursor.execute(f'SELECT Customer_ID FROM Accounts where Account_ID = (\'{temp_1}\')')
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_2 = x[0]
+                #Fetch Account Type
+                mycursor.execute(f'SELECT type FROM Accounts where Account_ID = (\'{temp_1}\')')
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_3 = x[0]
+                #Fetch Balance
+                mycursor.execute(f'SELECT Balance FROM Accounts where Account_ID = (\'{temp_1}\')')
+                result = mycursor.fetchall()
+                for x in result:
+                    temp_4 = x[0]
+                if temp_3 == "Checking":
+                    account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None,None)
+                elif temp_3 == "Saving":
+                    account = SavingAccounts(temp_2,temp_1,temp_3,temp_4,None)
+                elif temp_3 == "Loan":
+                    account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
+            else:
+                print("Cannot find the designated Account ID")
         
 
 class Admin_Interface:
@@ -201,5 +261,5 @@ def Login():
                 print("Wrong input")
         except ValueError:
             print("Please input Integer")
-
+   
 Login()
