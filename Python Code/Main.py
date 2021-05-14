@@ -46,40 +46,45 @@ class AccountTransactions(Accounts):
         self.trans_type = trans_type
         self.amount =amount
 
-def User_Customer():
+class Customers_Interface:
+    def User_Customer():
+        loop = True
+        while loop:
+            try:
+                print("\n")
+                Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
+                if Option == 1:
+                    loop = False
+                    pass
+                elif Option == 2:
+                    loop = False
+                    pass
+                else:
+                    print("Wrong input")
+            except ValueError:
+                    print("Please input Integer")
+
+    def New_Customer():
+        pass
+
+class Admin_Interface:
+    def User_Admin():
+        pass
+
+def Login():
     loop = True
     while loop:
         try:
-            print("\n")
-            Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
-            if Option == 1:
+            User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n>"))
+            if User_type == 1:
+                Customers_Interface.User_Customer()
                 loop = False
-                pass
-            elif Option == 2:
+            elif User_type == 2:
                 loop = False
-                pass
+                Admin_Interface.User_Admin()
             else:
                 print("Wrong input")
         except ValueError:
-                print("Please input Integer")
+            print("Please input Integer")
 
-def New_Customer():
-    pass
-
-def User_Admin():
-    pass
-
-loop = True
-while loop:
-    try:
-        User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n>"))
-        if User_type == 1:
-            login_attempt = False
-            User_Customer()
-        elif User_type == 2:
-            login_attempt = False
-            User_Admin()
-        else:
-            print("Wrong input")
-    except ValueError:
-        print("Please input Integer")
+Login()
