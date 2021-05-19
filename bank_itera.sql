@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2021 at 10:07 AM
+-- Generation Time: May 19, 2021 at 08:58 AM
 -- Server version: 10.4.18-MariaDB
--- PHP Version: 7.4.16
+-- PHP Version: 8.0.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `banktera`
+-- Database: `bank_itera`
 --
 
 -- --------------------------------------------------------
@@ -28,10 +28,23 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounts` (
-  `Account_ID` varchar(20) NOT NULL,
-  `Customer_ID` varchar(20) NOT NULL,
-  `Type` varchar(10) NOT NULL,
-  `Balance` int(20) NOT NULL
+  `Account ID` varchar(50) NOT NULL,
+  `Customer ID` varchar(50) NOT NULL,
+  `Type` varchar(50) NOT NULL,
+  `Balance` int(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `account_transactions`
+--
+
+CREATE TABLE `account_transactions` (
+  `Account ID` varchar(50) NOT NULL,
+  `Date Time` varchar(50) NOT NULL,
+  `Transaction Type` varchar(50) NOT NULL,
+  `Amount` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -41,24 +54,11 @@ CREATE TABLE `accounts` (
 --
 
 CREATE TABLE `customers` (
-  `Customer_ID` varchar(20) NOT NULL,
-  `Name` varchar(25) NOT NULL,
-  `address` varchar(50) NOT NULL,
-  `Email` varchar(50) NOT NULL,
-  `Phone` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `transactions`
---
-
-CREATE TABLE `transactions` (
-  `Account_ID` varchar(20) NOT NULL,
-  `Date_time` varchar(50) NOT NULL,
-  `Transaction_type` varchar(10) NOT NULL,
-  `Amount` int(20) NOT NULL
+  `Customer ID` varchar(50) NOT NULL,
+  `Name` varchar(50) NOT NULL,
+  `Addres` varchar(50) NOT NULL,
+  `Phone` varchar(50) NOT NULL,
+  `Email` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -69,20 +69,20 @@ CREATE TABLE `transactions` (
 -- Indexes for table `accounts`
 --
 ALTER TABLE `accounts`
-  ADD PRIMARY KEY (`Account_ID`),
-  ADD KEY `Customer_ID` (`Customer_ID`);
+  ADD PRIMARY KEY (`Account ID`),
+  ADD KEY `Customer ID` (`Customer ID`);
+
+--
+-- Indexes for table `account_transactions`
+--
+ALTER TABLE `account_transactions`
+  ADD KEY `Account ID` (`Account ID`);
 
 --
 -- Indexes for table `customers`
 --
 ALTER TABLE `customers`
-  ADD PRIMARY KEY (`Customer_ID`);
-
---
--- Indexes for table `transactions`
---
-ALTER TABLE `transactions`
-  ADD KEY `Account_ID` (`Account_ID`);
+  ADD PRIMARY KEY (`Customer ID`);
 
 --
 -- Constraints for dumped tables
@@ -92,13 +92,13 @@ ALTER TABLE `transactions`
 -- Constraints for table `accounts`
 --
 ALTER TABLE `accounts`
-  ADD CONSTRAINT `Customer_ID` FOREIGN KEY (`Customer_ID`) REFERENCES `customers` (`Customer_ID`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `Customer ID` FOREIGN KEY (`Customer ID`) REFERENCES `customers` (`Customer ID`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `transactions`
+-- Constraints for table `account_transactions`
 --
-ALTER TABLE `transactions`
-  ADD CONSTRAINT `Account_ID` FOREIGN KEY (`Account_ID`) REFERENCES `accounts` (`Account_ID`) ON UPDATE CASCADE;
+ALTER TABLE `account_transactions`
+  ADD CONSTRAINT `Account ID` FOREIGN KEY (`Account ID`) REFERENCES `accounts` (`Account ID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

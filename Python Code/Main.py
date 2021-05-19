@@ -18,7 +18,7 @@ class Customers:
         self.phone = phone
     
     def insert_data(self):
-        order = f'insert into accounts values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.email}\',\'{self.phone}\')'
+        order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.phone}\',\'{self.email}\')'
         mycursor.execute(order)
         mydb.commit()
         print("New Customer has been created")
