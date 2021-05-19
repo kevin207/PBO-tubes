@@ -1,3 +1,4 @@
+from codecs import lookup
 import mysql.connector
 import random
 mydb = mysql.connector.connect(
@@ -101,7 +102,15 @@ class Customers_Interface:
 
     def New_Customer():
         print("\nInput the following data")
-        temp_1 = "CS" + str(random.randint(101000,101999))
+        mycursor.execute("Select Customer_ID from customers")
+        result = mycursor.fetchall()
+        loop = True
+        while loop:
+            temp_1 = "CS" + str(random.randint(101000,101999))
+            if temp_1 in result:
+                pass
+            elif not temp_1 in result:
+                loop = False
         print(temp_1)
         temp_2 = input("Name : ")
         temp_3 = input("Address : ")
@@ -189,15 +198,42 @@ class Customers_Interface:
         
         temp_4 = ""
         if Account_option == 1:
-            temp_1 = "ACCA" + str(random.randint(1000,1999))
+            mycursor.execute("Select Account_ID from accounts")
+            result = mycursor.fetchall()
+            # temp_1 = "ACCA" + str(random.randint(1000,1999))
+            loop = True
+            while loop:
+                temp_1 = "ACCA" + str(random.randint(1000,1999))
+                if temp_1 in result:
+                    pass
+                elif not temp_1 in result:
+                    loop = False
             account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None,None)
             account.insert_data()
         elif Account_option == 2:
-            temp_1 = "ACSA" + str(random.randint(1000,1999))
+            mycursor.execute("Select Account_ID from accounts")
+            result = mycursor.fetchall()
+            # temp_1 = "ACSA" + str(random.randint(1000,1999))
+            loop = True
+            while loop:
+                temp_1 = "ACSA" + str(random.randint(1000,1999))
+                if temp_1 in result:
+                    pass
+                elif not temp_1 in result:
+                    loop = False
             account = SavingAccounts(temp_2,temp_1,temp_3,temp_4,None)
             account.insert_data()
         elif Account_option == 3:
-            temp_1 = "ACLA" + str(random.randint(1000,1999))
+            mycursor.execute("Select Account_ID from accounts")
+            result = mycursor.fetchall()
+            # temp_1 = "ACLA" + str(random.randint(1000,1999))
+            loop = True
+            while loop:
+                temp_1 = "ACCA" + str(random.randint(1000,1999))
+                if temp_1 in result:
+                    pass
+                elif not temp_1 in result:
+                    loop = False
             account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
             account.insert_data()
         else:
