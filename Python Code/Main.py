@@ -2,7 +2,6 @@ from codecs import lookup
 import mysql.connector
 import random
 import os
-import print_cust_class
 
 #Inisilasi
 clear = lambda: os.system('cls')
@@ -27,7 +26,7 @@ class Customers:
         order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.phone}\',\'{self.email}\')'
         mycursor.execute(order)
         mydb.commit()
-        print("New Customer has been created")
+        print("\nNew Customer has been created")
 
 class Accounts():
     def __init__(self, customer_id, account_id,type,balance):
@@ -130,7 +129,9 @@ class Customers_Interface:
         temp_5 = input("Phone : ")
         customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
         customer.insert_data()
-        print("Anda akan diarahkan ke halaman Login")
+        print("You will be directed to Login Page")
+        pause()
+        clear()
         Customers_Interface.Existing_Customer()
 
     def Existing_Customer():
@@ -179,23 +180,6 @@ class Customers_Interface:
                 pause()
                 clear()
 
-    # def User_Account(customer):
-    #     loop = True
-    #     while loop:
-    #         try:
-    #             print("\n")
-    #             Option = int(input("New Account?\n1. Yes | 2. No\n>"))
-    #             if Option == 1:
-    #                 loop = False
-    #                 Customers_Interface.New_Account(customer)
-    #             elif Option == 2:
-    #                 loop = False
-    #                 Customers_Interface.Existing_Account()
-    #             else:
-    #                 print("Wrong input")
-    #         except ValueError:
-    #                 print("Please input Integer")
-    
     def New_Account(customer):
         loop = True
         print("|Create New Account|")
@@ -327,7 +311,6 @@ class Customers_Interface:
                     loop = False
                     clear()
                     customer = Customers(None,None,None,None,None)
-                    print_cust_class.print_data(customer)
                     print("You will be directed to the Login Page")
                     pause()
                     clear()
@@ -341,9 +324,69 @@ class Customers_Interface:
                     pause()
                     clear()
 
+    def Account_Access(customer):
+        pass
 class Admin_Interface:
     def User_Admin():
-        pass
+        loop = True
+        while loop:
+            print("|Admin Login|")
+            print("Input the following data")
+            temp_1 = input("Admin ID : ")
+            temp_2 = input("Password : ")
+            #Verify
+            Verify_ID = None
+            Verify_Pass = None
+            mycursor.execute(f'SELECT Admin_ID FROM admin where Admin_ID = (\'{temp_1}\')')
+            result = mycursor.fetchall()
+            for x in result:
+                Verify_ID = x[0]
+            mycursor.execute(f'SELECT Password FROM admin where Admin_ID = (\'{temp_1}\')')
+            result = mycursor.fetchall()
+            for x in result:
+                Verify_Pass = x[0]
+            if not Verify_ID == None and Verify_Pass == temp_2:
+                print("\nLogin Success")
+                loop = False
+                print("You will be directed to the Main Menu")
+                pause()
+                clear()
+                Admin_Interface.Menu()
+            elif Verify_ID == None:
+                print("\nWrong Admin ID!")
+                pause()
+                clear()
+            elif not Verify_Pass == temp_2:
+                print("\nWrong Password!")
+                pause()
+                clear()
+                
+    def Menu():
+        print("|Menu|")
+        loop = True
+        while loop:
+            try:
+                option = int(input("Choose the following option:\n1. View All Customers Balance | 2. Delete Customer Account |3. Logout\n>"))
+                if option == 1:
+                    clear()
+                    print("View Customer Balance")
+                    clear()
+                    loop = False
+                elif option == 2:
+                    clear()
+                    pass
+                    loop = False
+                elif option == 3:
+                    clear()
+                    print("You will be directed to the Login Page")
+                    pause()
+                    clear()
+                    loop = False
+                    Login()
+                else:
+                    print("Wrong input")
+            except ValueError:
+                print("Please input Integer")
 
 def Login():
     loop = True
@@ -355,7 +398,7 @@ def Login():
                 Customers_Interface.User_Customer()
                 loop = False
             elif User_type == 2:
-                clear
+                clear()
                 loop = False
                 Admin_Interface.User_Admin()
             else:
