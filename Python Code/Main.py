@@ -53,7 +53,6 @@ class CheckingAccounts(Accounts):
         mydb.commit()
         print("\nChecking Account has been created")
 
-
 class SavingAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,interest_rate):
         super().__init__(customer_id, account_id, type, balance)
@@ -64,7 +63,6 @@ class SavingAccounts(Accounts):
         mycursor.execute(order)
         mydb.commit()
         print("\nSaving Account has been created")
-
 
 class LoanAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,principal_amount,interest_rate,loan_duration):
@@ -78,7 +76,6 @@ class LoanAccounts(Accounts):
         mycursor.execute(order)
         mydb.commit()
         print("\nLoan Account has been created")
-
 
 class AccountTransactions(Accounts):
     def __init__(self, account_id,date,trans_type,amount):
@@ -326,6 +323,7 @@ class Customers_Interface:
 
     def Account_Access(customer):
         pass
+    
 class Admin_Interface:
     def User_Admin():
         loop = True
