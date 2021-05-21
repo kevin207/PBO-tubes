@@ -1,6 +1,12 @@
 from codecs import lookup
 import mysql.connector
 import random
+import os
+import print_cust_class
+
+#Inisilasi
+clear = lambda: os.system('cls')
+pause = lambda: os.system('pause')
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
@@ -46,7 +52,7 @@ class CheckingAccounts(Accounts):
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
-        print("Checking Account has been created")
+        print("\nChecking Account has been created")
 
 
 class SavingAccounts(Accounts):
@@ -58,7 +64,7 @@ class SavingAccounts(Accounts):
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
-        print("Saving Account has been created")
+        print("\nSaving Account has been created")
 
 
 class LoanAccounts(Accounts):
@@ -69,10 +75,10 @@ class LoanAccounts(Accounts):
         self.loan_duration = loan_duration
 
     def insert_data(self):
-        order = f'insert into customers values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
+        order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
-        print("Loan Account has been created")
+        print("\nLoan Account has been created")
 
 
 class AccountTransactions(Accounts):
@@ -87,21 +93,27 @@ class Customers_Interface:
         loop = True
         while loop:
             try:
-                print("\n")
                 Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
                 if Option == 1:
                     loop = False
+                    clear()
                     Customers_Interface.New_Customer()
                 elif Option == 2:
                     loop = False
+                    clear()
                     Customers_Interface.Existing_Customer()
                 else:
                     print("Wrong input")
+                    pause()
+                    clear()
             except ValueError:
                     print("Please input Integer")
+                    pause()
+                    clear()
 
     def New_Customer():
-        print("\nInput the following data")
+        print("|Create New Customer|")
+        print("Input the following data")
         mycursor.execute("Select Customer_ID from customers")
         result = mycursor.fetchall()
         loop = True
@@ -118,11 +130,14 @@ class Customers_Interface:
         temp_5 = input("Phone : ")
         customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
         customer.insert_data()
+        print("Anda akan diarahkan ke halaman Login")
+        Customers_Interface.Existing_Customer()
 
     def Existing_Customer():
         loop = True
         while loop:
-            print("\nInput the following data")
+            print("|Customer Login|")
+            print("Input the following data")
             temp_1 = input("Customer ID : ")
             #Verify
             Verify = None
@@ -131,7 +146,7 @@ class Customers_Interface:
             for x in result:
                 Verify = x[0]
             if not Verify == None:
-                print("Login Success")
+                print("\nLogin Success")
                 loop = False
                 #Fetch Name
                 mycursor.execute(f'SELECT Name FROM Customers where Customer_ID = (\'{temp_1}\')')
@@ -154,30 +169,37 @@ class Customers_Interface:
                 for x in result:
                     temp_5 = x[0]
                 customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
-                Customers_Interface.User_Account(customer)
+                print("You will be directed to the Main Menu")
+                pause()
+                clear()
+                Customers_Interface.Menu(customer)
+
             else:
                 print("Cannot find the designated Customer ID")
+                pause()
+                clear()
 
-    def User_Account(customer):
-        loop = True
-        while loop:
-            try:
-                print("\n")
-                Option = int(input("New Account?\n1. Yes | 2. No\n>"))
-                if Option == 1:
-                    loop = False
-                    Customers_Interface.New_Account(customer)
-                elif Option == 2:
-                    loop = False
-                    Customers_Interface.Existing_Account()
-                else:
-                    print("Wrong input")
-            except ValueError:
-                    print("Please input Integer")
+    # def User_Account(customer):
+    #     loop = True
+    #     while loop:
+    #         try:
+    #             print("\n")
+    #             Option = int(input("New Account?\n1. Yes | 2. No\n>"))
+    #             if Option == 1:
+    #                 loop = False
+    #                 Customers_Interface.New_Account(customer)
+    #             elif Option == 2:
+    #                 loop = False
+    #                 Customers_Interface.Existing_Account()
+    #             else:
+    #                 print("Wrong input")
+    #         except ValueError:
+    #                 print("Please input Integer")
     
     def New_Account(customer):
         loop = True
-        print("\nInput the following data")
+        print("|Create New Account|")
+        print("Input the following data")
         temp_2 = customer.customer_id
         while loop:
             try:
@@ -210,6 +232,9 @@ class Customers_Interface:
                     loop = False
             account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None,None)
             account.insert_data()
+            pause()
+            clear()
+            Customers_Interface.Menu(customer)
         elif Account_option == 2:
             mycursor.execute("Select Account_ID from accounts")
             result = mycursor.fetchall()
@@ -223,6 +248,9 @@ class Customers_Interface:
                     loop = False
             account = SavingAccounts(temp_2,temp_1,temp_3,temp_4,None)
             account.insert_data()
+            pause()
+            clear()
+            Customers_Interface.Menu(customer)
         elif Account_option == 3:
             mycursor.execute("Select Account_ID from accounts")
             result = mycursor.fetchall()
@@ -236,6 +264,9 @@ class Customers_Interface:
                     loop = False
             account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
             account.insert_data()
+            pause()
+            clear()
+            Customers_Interface.Menu(customer)
         else:
             print("something went wrong")
         
@@ -276,7 +307,39 @@ class Customers_Interface:
                     account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
             else:
                 print("Cannot find the designated Account ID")
-        
+
+    def Menu(customer):
+        print("|Menu|")
+        loop = True
+        while loop:
+            try:
+                Option = int(input("Choose the following option\n1. Access Account | 2. Create Account | 3. Log Out\n>"))
+                if Option == 1:
+                    loop = False
+                    clear()
+                    print("Access Account")
+                elif Option == 2:
+                    loop = False
+                    clear()
+                    Customers_Interface.New_Account(customer)
+                
+                elif Option == 3:
+                    loop = False
+                    clear()
+                    customer = Customers(None,None,None,None,None)
+                    print_cust_class.print_data(customer)
+                    print("You will be directed to the Login Page")
+                    pause()
+                    clear()
+                    Login()
+                else:
+                    print("Wrong input")
+                    pause()
+                    clear()
+            except ValueError:
+                    print("Please input Integer")
+                    pause()
+                    clear()
 
 class Admin_Interface:
     def User_Admin():
@@ -288,15 +351,19 @@ def Login():
         try:
             User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n>"))
             if User_type == 1:
+                clear()
                 Customers_Interface.User_Customer()
                 loop = False
             elif User_type == 2:
+                clear
                 loop = False
                 Admin_Interface.User_Admin()
             else:
                 print("Wrong input")
         except ValueError:
             print("Please input Integer")
-   
-Login()
-#halo
+
+if __name__ == "__main__":
+    clear()
+    Login()
+
