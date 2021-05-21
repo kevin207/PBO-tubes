@@ -238,7 +238,7 @@ class Customers_Interface:
             # temp_1 = "ACLA" + str(random.randint(1000,1999))
             loop = True
             while loop:
-                temp_1 = "ACCA" + str(random.randint(1000,1999))
+                temp_1 = "ACLA" + str(random.randint(1000,1999))
                 if temp_1 in result:
                     pass
                 elif not temp_1 in result:
@@ -359,6 +359,33 @@ class Admin_Interface:
                 pause()
                 clear()
                 
+    def Delete_Account():
+        print("|Delete Customer Account|")
+        temp_1 = str(input("Input Customer Account\n>"))
+        order = f'select Account_ID from accounts where Account_ID  = \'{temp_1}\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+        if result:
+            order = f'select Account_ID from account_transactions where Account_ID  = \'{temp_1}\''
+            mycursor.execute(order)
+            result_2 = mycursor.fetchall()
+            if result_2:
+                order = f'DELETE FROM account_transaction WHERE account_transaction.Account_ID = \'{temp_1}\''
+                mycursor.execute(order)
+                mydb.commit()
+            order = f'DELETE FROM accounts WHERE accounts.Account_ID = \'{temp_1}\''
+            mycursor.execute(order)
+            mydb.commit()
+            clear()
+            print("Account Has Been Deleted!\n")
+            pause()
+            clear()
+        else:
+            print("Nomor tiket tidak ditemukan!")
+            pause()
+            clear()
+            Admin_Interface.Delete_Account()
+
     def Menu():
         print("|Menu|")
         loop = True
@@ -372,8 +399,7 @@ class Admin_Interface:
                     loop = False
                 elif option == 2:
                     clear()
-                    pass
-                    loop = False
+                    Admin_Interface.Delete_Account()
                 elif option == 3:
                     clear()
                     print("You will be directed to the Login Page")
