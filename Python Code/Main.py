@@ -1,4 +1,5 @@
 from codecs import lookup
+from abc import ABC, abstractmethod
 import mysql.connector
 import random
 import os
@@ -12,14 +13,32 @@ mydb = mysql.connector.connect(
   database ="banktera"
 )
 
-#Overriding ada pada insert data (Same method and arguments, diffrent function)
-#Overloading ada pada (Same method but diffrent arguments)
-#Abstract classes ada pada (.............)
-
-
 mycursor = mydb.cursor()
 
-class Customers:
+#Overriding ada pada insert data (Same method and arguments from parents, different function in child) DONE
+
+#Overloading ada pada (Same method but diffrent arguments)
+#EXAMPLE:
+
+    #def add_bullet(sprite, start, headto, spead, acceleration):
+    #def add_bullet(sprite, script): # For bullets that are controlled by a script
+    #def add_bullet(sprite, curve, speed): # for bullets with curved paths
+        
+class AbstractClass(ABC): #Penerapan Abstract class dengan abstract method insert_data DONE
+
+    def __init__(self,customer_id,name,address,email,phone):
+        self.customer_id = customer_id
+        self.name = name
+        self.address = address
+        self.email = email
+        self.phone = phone
+        super().__init__()
+
+    @abstractmethod 
+    def insert_data(self):
+        pass
+    
+class Customers(AbstractClass):
     def __init__(self,customer_id,name,address,email,phone):
         self.customer_id = customer_id
         self.name = name
@@ -33,14 +52,14 @@ class Customers:
         mydb.commit()
         print("\nNew Customer has been created")
 
-class Accounts():
+class Accounts(AbstractClass):
     def __init__(self, customer_id, account_id,type,balance):
         self.customer_id = customer_id
         self.account_id = account_id
         self.type = type
         self.balance = balance
 
-    def insert_data(self):
+    def insert_data(self): #overriding (Parent Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
@@ -52,7 +71,7 @@ class CheckingAccounts(Accounts):
         self.credit_limit = credit_limit
         self.fee = fee
 
-    def insert_data(self):
+    def insert_data(self): #overriding (Child Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
@@ -63,7 +82,7 @@ class SavingAccounts(Accounts):
         super().__init__(customer_id, account_id, type, balance)
         self.interest_rate = interest_rate
 
-    def insert_data(self):
+    def insert_data(self): #overriding (Child Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
@@ -76,7 +95,7 @@ class LoanAccounts(Accounts):
         self.interest_rate = interest_rate
         self.loan_duration = loan_duration
 
-    def insert_data(self):
+    def insert_data(self): #overriding (Child Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
