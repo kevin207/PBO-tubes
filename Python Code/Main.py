@@ -85,11 +85,11 @@ class AccountTransactions(Accounts):
         self.amount =amount
 
 class Customers_Interface:
-    def User_Customer():
+     def User_Customer():
         loop = True
         while loop:
             try:
-                Option = int(input("New Customer?\n1. Yes | 2. No\n>"))
+                Option = int(input("New Customer?\n1. Yes | 2. No\n\nAnswer: "))
                 if Option == 1:
                     loop = False
                     clear()
@@ -167,7 +167,7 @@ class Customers_Interface:
                 for x in result:
                     temp_5 = x[0]
                 customer = Customers(temp_1,temp_2,temp_3,temp_4,temp_5)
-                print("You will be directed to the Main Menu")
+                print("You will be directed to the Customer Menu")
                 pause()
                 clear()
                 Customers_Interface.Menu(customer)
@@ -184,7 +184,7 @@ class Customers_Interface:
         temp_2 = customer.customer_id
         while loop:
             try:
-                Account_option = int(input("Choose Account Type\n1.Checking | 2.Saving | 3.Loan\n>"))
+                Account_option = int(input("Choose Account Type\n1.Checking | 2.Saving | 3.Loan\n\nAnswer: "))
                 if Account_option == 1:
                     loop = False
                     temp_3 = "Checking"
@@ -290,28 +290,26 @@ class Customers_Interface:
                 print("Cannot find the designated Account ID")
 
     def Menu(customer):
-        print("|Menu|")
+        print("|Customer Menu|")
         loop = True
         while loop:
             try:
-                Option = int(input("Choose the following option\n1. Access Account | 2. Create Account | 3. Log Out\n>"))
+                Option = int(input("Choose the following option\n1. Access Account | 2. Create Account | 3. Log Out\n\nAnswer: "))
                 if Option == 1:
                     loop = False
                     clear()
                     print("Access Account")
+                    
                 elif Option == 2:
                     loop = False
                     clear()
                     Customers_Interface.New_Account(customer)
                 
                 elif Option == 3:
-                    loop = False
                     clear()
                     customer = Customers(None,None,None,None,None)
-                    print("You will be directed to the Login Page")
-                    pause()
-                    clear()
-                    Login()
+                    Logout()
+                    
                 else:
                     print("Wrong input")
                     pause()
@@ -346,7 +344,7 @@ class Admin_Interface:
             if not Verify_ID == None and Verify_Pass == temp_2:
                 print("\nLogin Success")
                 loop = False
-                print("You will be directed to the Main Menu")
+                print("You will be directed to Admin Menu")
                 pause()
                 clear()
                 Admin_Interface.Menu()
@@ -387,11 +385,11 @@ class Admin_Interface:
             Admin_Interface.Delete_Account()
 
     def Menu():
-        print("|Menu|")
+        print("|Admin Menu|")
         loop = True
         while loop:
             try:
-                option = int(input("Choose the following option:\n1. View All Customers Balance | 2. Delete Customer Account |3. Logout\n>"))
+                option = int(input("Choose the following option:\n1. View All Customers Balance | 2. Delete Customer Account |3. Logout\n\nAnswer: "))
                 if option == 1:
                     clear()
                     print("View Customer Balance")
@@ -401,12 +399,7 @@ class Admin_Interface:
                     clear()
                     Admin_Interface.Delete_Account()
                 elif option == 3:
-                    clear()
-                    print("You will be directed to the Login Page")
-                    pause()
-                    clear()
-                    loop = False
-                    Login()
+                    Logout()
                 else:
                     print("Wrong input")
             except ValueError:
@@ -416,7 +409,8 @@ def Login():
     loop = True
     while loop:
         try:
-            User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n>"))
+            print("|Main Menu|")
+            User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n\nAnswer: "))
             if User_type == 1:
                 clear()
                 Customers_Interface.User_Customer()
@@ -430,6 +424,15 @@ def Login():
         except ValueError:
             print("Please input Integer")
 
+def Logout():
+    clear()
+    print("You will be directed to the Main Menu")
+    pause()
+    clear()
+    loop = False
+    Login()
+    
+    
 if __name__ == "__main__":
     clear()
     Login()
