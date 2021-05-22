@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import mysql.connector
 import random
 import os
+from prettytable import PrettyTable
 
 #Inisilasi
 clear = lambda: os.system('cls')
@@ -45,6 +46,9 @@ class Customers(AbstractClass):
         self.address = address
         self.email = email
         self.phone = phone
+
+    def import_customer_id(self):
+        return self.customer_id
     
     def insert_data(self): 
         order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.phone}\',\'{self.email}\')'
@@ -64,11 +68,20 @@ class Accounts(AbstractClass):
         mycursor.execute(order)
         mydb.commit()
         print("Account has been created")
+    
+    def Deposit():
+        pass
+
+    def Withdraw():
+        pass
+
+    def Balance_Enquiry():
+        pass
 
 class CheckingAccounts(Accounts):
-    def __init__(self, customer_id, account_id, type, balance,credit_limit,fee):
+    def __init__(self, customer_id, account_id, type, balance,fee):
         super().__init__(customer_id, account_id, type, balance)
-        self.credit_limit = credit_limit
+        self.credit_limit = 10000000
         self.fee = fee
 
     def insert_data(self): #overriding (Child Class)
@@ -76,24 +89,31 @@ class CheckingAccounts(Accounts):
         mycursor.execute(order)
         mydb.commit()
         print("\nChecking Account has been created")
+    
+    def overdraft(self):
+        pass
 
 class SavingAccounts(Accounts):
-    def __init__(self, customer_id, account_id, type, balance,interest_rate):
+    def __init__(self, customer_id, account_id, type, balance):
         super().__init__(customer_id, account_id, type, balance)
-        self.interest_rate = interest_rate
+        self.interest_rate = 10 #10%
 
     def insert_data(self): #overriding (Child Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
         mycursor.execute(order)
         mydb.commit()
         print("\nSaving Account has been created")
+    
+    def monthly_interest(self):
+        pass
+
 
 class LoanAccounts(Accounts):
-    def __init__(self, customer_id, account_id, type, balance,principal_amount,interest_rate,loan_duration):
+    def __init__(self, customer_id, account_id, type, balance,principal_amount):
         super().__init__(customer_id, account_id, type, balance)
         self.principal_amount = principal_amount
-        self.interest_rate = interest_rate
-        self.loan_duration = loan_duration
+        self.interest_rate = 10 #10%
+        self.loan_duration = 30
 
     def insert_data(self): #overriding (Child Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
@@ -107,6 +127,9 @@ class AccountTransactions(Accounts):
         self.date = date
         self.trans_type = trans_type
         self.amount =amount
+
+class Banking_System():
+    pass
 
 class Customers_Interface:
     def User_Customer():
@@ -235,8 +258,9 @@ class Customers_Interface:
                     pass
                 elif not temp_1 in result:
                     loop = False
-            account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None,None)
+            account = CheckingAccounts(temp_2,temp_1,temp_3,temp_4,None)
             account.insert_data()
+            account = CheckingAccounts(None,None,None,None,None)
             pause()
             clear()
             Customers_Interface.Menu(customer)
@@ -251,8 +275,9 @@ class Customers_Interface:
                     pass
                 elif not temp_1 in result:
                     loop = False
-            account = SavingAccounts(temp_2,temp_1,temp_3,temp_4,None)
+            account = SavingAccounts(temp_2,temp_1,temp_3,temp_4)
             account.insert_data()
+            account = CheckingAccounts(None,None,None,None,None)
             pause()
             clear()
             Customers_Interface.Menu(customer)
@@ -267,8 +292,9 @@ class Customers_Interface:
                     pass
                 elif not temp_1 in result:
                     loop = False
-            account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None,None,None)
+            account = LoanAccounts(temp_2,temp_1,temp_3,temp_4,None)
             account.insert_data()
+            account = LoanAccounts(None,None,None,None,None)
             pause()
             clear()
             Customers_Interface.Menu(customer)
@@ -322,7 +348,7 @@ class Customers_Interface:
                 if Option == 1:
                     loop = False
                     clear()
-                    print("Access Account")
+                    Customers_Interface.Account_Access(customer)
                     
                 elif Option == 2:
                     loop = False
@@ -344,7 +370,110 @@ class Customers_Interface:
                     clear()
 
     def Account_Access(customer):
-        pass
+        print("|Choose Account|")
+        try:
+            i = 0
+            j = []
+            temp_1 = customer.import_customer_id()
+            order = f'SELECT Account_ID,Type FROM accounts WHERE Customer_ID = \'{temp_1}\''
+            mycursor.execute(order)
+            result = mycursor.fetchall()
+            temp_2 = PrettyTable(["Account ID", "Account Type"])
+            for x in result:
+                temp_2.add_row(x)
+            print(temp_2)
+            Option = str(input("Input Account ID on the list : "))
+            order = f'SELECT Type FROM accounts WHERE Account_ID = \'{Option}\''
+            mycursor.execute(order)
+            result = mycursor.fetchall()
+            for x in result:
+                if x[0] == "Checking":
+                    #Fetch Account ID
+                    mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_4 = x[0]
+                    #Fetch Customer ID
+                    mycursor.execute(f'SELECT Customer_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_3 = x[0]
+                    #Fetch Type
+                    mycursor.execute(f'SELECT Type FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_5 = x[0]
+                    #Fetch Balance
+                    mycursor.execute(f'SELECT Balance FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_6 = x[0]
+                    account = CheckingAccounts(temp_3,temp_4,temp_5,temp_6,None)
+                elif x[0] == "Saving":
+                    #Fetch Account ID
+                    mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_4 = x[0]
+                    #Fetch Customer ID
+                    mycursor.execute(f'SELECT Customer_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_3 = x[0]
+                    #Fetch Type
+                    mycursor.execute(f'SELECT Type FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_5 = x[0]
+                    #Fetch Balance
+                    mycursor.execute(f'SELECT Balance FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_6 = x[0]
+                    account = SavingAccounts(temp_3,temp_4,temp_5,temp_6)
+                elif x[0] == "Loan":
+                    #Fetch Account ID
+                    mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_4 = x[0]
+                    #Fetch Customer ID
+                    mycursor.execute(f'SELECT Customer_ID FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_3 = x[0]
+                    #Fetch Type
+                    mycursor.execute(f'SELECT Type FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_5 = x[0]
+                    #Fetch Balance
+                    mycursor.execute(f'SELECT Balance FROM accounts where Account_ID = (\'{Option}\')')
+                    result = mycursor.fetchall()
+                    for x in result:
+                        temp_6 = x[0]
+                    account = LoanAccounts(temp_3,temp_4,temp_5,temp_6,None)
+            if not result:
+                print("Account ID not Found!")
+                pause()
+                clear()
+                Customers_Interface.Account_Access(customer)
+        except ValueError:
+            Customers_Interface.Account_Access(customer)
+
+    def Account_Menu(customer):
+        try:
+            Option = int(input("Choose the following option\n1. Deposit | 2. Withdraw | 3. Balance Enquiry | 4. Back to Main Menu\n\nAnswer: "))
+            if Option == 1:
+                pass
+            elif Option == 2:
+                pass
+            elif Option == 3:
+                pass
+            elif Option == 4:
+                pass
+        except ValueError:
+            Customers_Interface.Account_Menu(customer)
     
 class Admin_Interface:
     def User_Admin():
