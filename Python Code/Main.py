@@ -68,6 +68,21 @@ class Accounts(AbstractClass):
 
     def import_type(self):
         return self.type
+    
+    def balance_setter(self,input):
+        self.balance = input
+        
+    def balance_getter(self):
+        return self.balance
+    
+    def customer_id_setter(self,input):
+        self.customer_id = input
+
+    def account_id_setter(self,input):
+        self.account_id = input
+
+    def type_setter(self,input):
+        self.type_id = input
 
     def insert_data(self): #overriding (Parent Class)
         order = f'insert into accounts values (\'{self.account_id}\',\'{self.customer_id}\',\'{self.type}\',\'{self.balance}\')'
@@ -95,11 +110,21 @@ class CheckingAccounts(Accounts):
         mycursor.execute(order)
         mydb.commit()
         print("\nChecking Account has been created")
-    
-    def overdraft(self):
 
+    def fee_setter(self,input):
+        self.fee = abs(input)
 
-
+    def overdraft(self,input):
+        approval = False
+        if input > (self.credit_limit*-1):
+            #update approval
+            approval = True
+            return approval
+        else:
+            #update disapproval
+            approval = False
+            return approval
+        
 class SavingAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance):
         super().__init__(customer_id, account_id, type, balance)
@@ -113,7 +138,6 @@ class SavingAccounts(Accounts):
     
     def monthly_interest(self):
         pass
-
 
 class LoanAccounts(Accounts):
     def __init__(self, customer_id, account_id, type, balance,principal_amount):
@@ -416,7 +440,7 @@ class Customers_Interface:
                     for x in result:
                         temp_6 = x[0]
                     account = CheckingAccounts(temp_3,temp_4,temp_5,temp_6,None)
-                    Customers_Interface.Account_Menu(account)
+                    Customers_Interface.Account_Menu(account,customer)
                 elif x[0] == "Saving":
                     #Fetch Account ID
                     mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
@@ -439,7 +463,7 @@ class Customers_Interface:
                     for x in result:
                         temp_6 = x[0]
                     account = SavingAccounts(temp_3,temp_4,temp_5,temp_6)
-                    Customers_Interface.Account_Menu(account)
+                    Customers_Interface.Account_Menu(account,customer)
                 elif x[0] == "Loan":
                     #Fetch Account ID
                     mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
@@ -462,7 +486,8 @@ class Customers_Interface:
                     for x in result:
                         temp_6 = x[0]
                     account = LoanAccounts(temp_3,temp_4,temp_5,temp_6,None)
-                    Customers_Interface.Account_Menu(account)
+                    clear()
+                    Customers_Interface.Account_Menu(account,customer)
             if not result:
                 print("Account ID not Found!")
                 pause()
@@ -471,14 +496,26 @@ class Customers_Interface:
         except ValueError:
             Customers_Interface.Account_Access(customer)
 
-    def Deposit(account):
+    def Deposit(account,customer):
         print("|Deposit|")
         temp_1 = int(input("Value: "))
         temp_2 = account.import_account_id()
+        order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+
+        for x in result:
+            temp_3 = x[0]
+        temp_1 = temp_1 + temp_3
+        account.balance_setter(temp_1)
         mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_1}\') WHERE Account_ID = (\'{temp_2}\')' )
         mydb.commit()
+        print("You will be directed to Account Menu")
+        pause()
+        clear()
+        Customers_Interface.Account_Menu(account,customer)
 
-    def Withdraw(account):
+    def Withdraw(account,customer):
         print("|Withdraw|")
         temp_1 = int(input("Value: "))
         temp_2 = account.import_account_id()
@@ -493,33 +530,77 @@ class Customers_Interface:
         temp_3 = temp_3 - temp_1
         temp_4 = account.import_type()
         if temp_3<0:
-            if temp_4 = "Checking":
-
-                account.overdraft()
-
-            elif temp_4 = "Saving":
+            if temp_4 == "Checking":
+                temp_5 = account.overdraft(temp_3)
+                if temp_5:
+                    account.balance_setter(temp_3)
+                    account.fee_setter(temp_3)
+                    mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_3}\') WHERE Account_ID = (\'{temp_2}\')')
+                    mydb.commit()
+                elif not temp_5:
+                    print("Withdraw Value Exceed Credit Limit!")
+                else:
+                    print("Error")
+                
+            elif temp_4 == "Saving":
                 pass
 
-            elif temp_4 = "Loan":
+            elif temp_4 == "Loan":
                 pass
-        else :
+        elif temp_3 >= 0:
             mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_1}\') WHERE Account_ID = (\'{temp_2}\')')
             mydb.commit()
+        else:
+            print("Error")
+        print("You will be directed to Account Menu")
+        pause()
+        clear()
+        Customers_Interface.Account_Menu(account,customer)
+    
+    def Balance_Enquiry(account,customer):
+        print("|Balance|")
+        temp_1 = account.import_account_id()
+        order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_1}\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
 
+        for x in result:
+            temp_2 = x[0]
+        print("Your Balance : " + str(temp_2))
+        print("\nYou will be directed to Account Menu")
+        pause()
+        clear()
+        Customers_Interface.Account_Menu(account,customer)
 
-    def Account_Menu(account):
+    def Back_to_Main_Menu(account,customer):
+        account.balance_setter(None)
+        account.customer_id_setter(None)
+        account.account_id_setter(None)
+        account.type_setter(None)
+        print("You will be directed to Main Menu")
+        pause()
+        clear()
+        Customers_Interface.Menu(customer)
+        
+    def Account_Menu(account,customer):
         try:
+            clear()
+            print("|Account Menu|")
             Option = int(input("Choose the following option\n1. Deposit | 2. Withdraw | 3. Balance Enquiry | 4. Back to Main Menu\n\nAnswer: "))
             if Option == 1:
-                Customers_Interface.Deposit(account)
+                clear()
+                Customers_Interface.Deposit(account,customer)
             elif Option == 2:
-                pass
+                clear()
+                Customers_Interface.Withdraw(account,customer)
             elif Option == 3:
-                pass
+                clear()
+                Customers_Interface.Balance_Enquiry(account,customer)
             elif Option == 4:
-                pass
+                Customers_Interface.Back_to_Main_Menu(account,customer)
         except ValueError:
-            Customers_Interface.Account_Menu(customer)
+            clear()
+            Customers_Interface.Account_Menu(account,customer)
     
 class Admin_Interface:
     def User_Admin():
@@ -620,7 +701,7 @@ def Login():
                 Admin_Interface.User_Admin()
             elif User_type == 3:
                 print("Program Exited")
-                break
+                exit()
             else:
                 print("Wrong input")
         except ValueError:
