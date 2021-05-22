@@ -434,7 +434,7 @@ def Login():
     while loop:
         try:
             print("|Main Menu|")
-            User_type = int(input("Choose User type:\n1. Customer | 2. Admin\n\nAnswer: "))
+            User_type = int(input("Choose User type:\n1. Customer | 2. Admin | 3.Exit \n\nAnswer: "))
             if User_type == 1:
                 clear()
                 Customers_Interface.User_Customer()
@@ -443,6 +443,9 @@ def Login():
                 clear()
                 loop = False
                 Admin_Interface.User_Admin()
+            elif User_type == 3:
+                print("Program Exited")
+                break
             else:
                 print("Wrong input")
         except ValueError:
