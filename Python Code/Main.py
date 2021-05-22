@@ -12,6 +12,11 @@ mydb = mysql.connector.connect(
   database ="banktera"
 )
 
+#Overriding ada pada insert data (Same method and arguments, diffrent function)
+#Overloading ada pada (Same method but diffrent arguments)
+#Abstract classes ada pada (.............)
+
+
 mycursor = mydb.cursor()
 
 class Customers:
@@ -22,7 +27,7 @@ class Customers:
         self.email = email
         self.phone = phone
     
-    def insert_data(self):
+    def insert_data(self): 
         order = f'insert into customers values (\'{self.customer_id}\',\'{self.name}\',\'{self.address}\',\'{self.phone}\',\'{self.email}\')'
         mycursor.execute(order)
         mydb.commit()
