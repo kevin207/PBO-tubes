@@ -158,6 +158,24 @@ class AccountTransactions(Accounts):
         self.date = date
         self.trans_type = trans_type
         self.amount =amount
+    
+    def date_setter(self,input):
+        self.date = input
+    
+    def date_getter(self):
+        return self.date
+
+    def trans_type_setter(self,input):
+        self.trans_type = input
+    
+    def trans_type_getter(self):
+        return self.trans_type
+
+    def amount_setter(self,input):
+        self.amount = input
+
+    def amount_getter(self):
+        return self.amount
 
 class Banking_System():
     pass
