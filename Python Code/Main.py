@@ -795,6 +795,9 @@ class Admin_Interface:
             temp_2.add_row(x)
         print(temp_2)
         pause()
+        clear()
+        Admin_Interface.Menu()
+        
     def Menu():
         print("|Admin Menu|")
         loop = True
