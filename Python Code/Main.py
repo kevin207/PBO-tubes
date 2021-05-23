@@ -5,6 +5,12 @@ import random
 import os
 from prettytable import PrettyTable
 
+def get_time():
+    from datetime import datetime
+    now = datetime.now()
+    d3 = now.strftime("%Y-%m-%d %H:%M:%S")
+    return d3
+
 #Inisilasi
 clear = lambda: os.system('cls')
 pause = lambda: os.system('pause')
@@ -169,6 +175,9 @@ class AccountTransactions(Accounts):
         self.trans_type = trans_type
         self.amount =amount
     
+    def acc_id_setter(self,input):
+        self.account_id= input
+    
     def date_setter(self,input):
         self.date = input
     
@@ -186,6 +195,11 @@ class AccountTransactions(Accounts):
 
     def amount_getter(self):
         return self.amount
+
+    def save_to_database(self):
+        order = f'insert into account_transactions values (\'{self.account_id}\',\'{self.date}\',\'{self.trans_type}\',\'{self.amount}\')'
+        mycursor.execute(order)
+        mydb.commit()
 
 class Banking_System():
     pass
@@ -527,25 +541,49 @@ class Customers_Interface:
     def Deposit(account,customer):
         print("|Deposit|")
         temp_1 = int(input("Value: "))
-        temp_2 = account.import_account_id()
-        order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
-        mycursor.execute(order)
-        result = mycursor.fetchall()
+        if not temp_1 <0:
+            temp_2 = account.import_account_id()
+            order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
+            mycursor.execute(order)
+            result = mycursor.fetchall()
+            for x in result:
+                temp_3 = x[0]
+            temp_6 = temp_1
+            temp_1 = temp_1 + temp_3
+            
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_1}\') WHERE Account_ID = (\'{temp_2}\')' )
+            mydb.commit()
 
-        for x in result:
-            temp_3 = x[0]
-        temp_1 = temp_1 + temp_3
-        account.balance_setter(temp_1)
-        mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_1}\') WHERE Account_ID = (\'{temp_2}\')' )
-        mydb.commit()
-        print("You will be directed to Account Menu")
-        pause()
-        clear()
-        Customers_Interface.Account_Menu(account,customer)
+            temp_4 = get_time()
+            print(temp_4)
+            temp_5 = "Deposit"
+            order = f'insert into account_transactions values (\'{temp_2}\',\'{temp_4}\',\'{temp_5}\',\'{temp_6}\')'
+            mycursor.execute(order)
+            mydb.commit()
+
+            #Set Account Transaction Class
+            # acc_trans.balance_setter(temp_1)
+            # acc_trans.acc_id_setter(temp_2)
+            # acc_trans.date_setter(temp_4)
+            # temp_5 = "Deposit"
+            # acc_trans.trans_type_setter(temp_5)
+            # acc_trans.amount_setter(temp_1)
+            # acc_trans.save_to_database()
+
+            print("You will be directed to Account Menu")
+            pause()
+            clear()
+            Customers_Interface.Account_Menu(account,customer)
+        else:
+            print("You can't input negative value")
+            pause()
+            clear()
+            Customers_Interface.Deposit(account,customer)
 
     def Withdraw(account,customer):
         print("|Withdraw|")
         temp_1 = int(input("Value: "))
+        temp_1 = abs(temp_1)
         temp_2 = account.import_account_id()
 
         order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
@@ -620,6 +658,7 @@ class Customers_Interface:
                 Customers_Interface.Deposit(account,customer)
             elif Option == 2:
                 clear()
+                # acc_trans = AccountTransactions(None,None,None,None)
                 Customers_Interface.Withdraw(account,customer)
             elif Option == 3:
                 clear()
