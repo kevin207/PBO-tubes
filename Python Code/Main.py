@@ -8,13 +8,23 @@ from prettytable import PrettyTable
 #Inisilasi
 clear = lambda: os.system('cls')
 pause = lambda: os.system('pause')
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  database ="banktera"
-)
+loop = True
+while loop:
+    try:
+        clear()
+        mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        database ="banktera"
+        )
 
-mycursor = mydb.cursor()
+        mycursor = mydb.cursor()
+        loop = False
+    except :
+        print("Can't connect to Database")
+        print("Try to restart MySQL Module")
+        print("\nRetry?")
+        pause()
 
 #Overriding ada pada insert data (Same method and arguments from parents, different function in child) DONE
 
