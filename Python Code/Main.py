@@ -4,13 +4,25 @@ import mysql.connector
 import random
 import os
 from prettytable import PrettyTable
-import prettytable
 
 def get_time():
     from datetime import datetime
     now = datetime.now()
     d3 = now.strftime("%Y-%m-%d %H:%M:%S")
     return d3
+
+def date_time():
+    from datetime import datetime
+    now = datetime.now()
+    d3 = now.strftime("%d")
+    return d3
+
+def clock_time():
+    from datetime import datetime
+    now = datetime.now()
+    d3 = now.strftime("%H:%M:%S")
+    return d3
+
 
 #Inisilasi
 clear = lambda: os.system('cls')
@@ -201,9 +213,6 @@ class AccountTransactions(Accounts):
         order = f'insert into account_transactions values (\'{self.account_id}\',\'{self.date}\',\'{self.trans_type}\',\'{self.amount}\')'
         mycursor.execute(order)
         mydb.commit()
-
-class Banking_System():
-    pass
 
 class Customers_Interface:
     def User_Customer():
@@ -442,23 +451,6 @@ class Customers_Interface:
                     pause()
                     clear()
 
-    def Saving_Interest(account):
-        i=0
-        c=[]
-        d=[]
-        temp_1 = account.import_account_id()
-        order = f'SELECT Date_Time FROM account_transactions WHERE Account_ID = \'{temp_1}\''
-        mycursor.execute(order)
-        result = mycursor.fetchall()
-        for x in result:
-            a = x[0]
-            b = str(a)
-            c.append(b[5:7])
-            d.append(b[8:10])
-        
-        print(c)
-        pause()
-
     def Account_Access(customer):
         print("|Choose Account|")
         try:
@@ -524,7 +516,7 @@ class Customers_Interface:
                             temp_6 = x[0]
                         account = SavingAccounts(temp_3,temp_4,temp_5,temp_6)
                         # Customers_Interface.Saving_Interest(account)
-                        Customers_Interface.Menu(customer)
+                        Customers_Interface.Account_Menu(account,customer)
                     elif x[0] == "Loan":
                         #Fetch Account ID
                         mycursor.execute(f'SELECT Account_ID FROM accounts where Account_ID = (\'{Option}\')')
@@ -548,7 +540,7 @@ class Customers_Interface:
                             temp_6 = x[0]
                         account = LoanAccounts(temp_3,temp_4,temp_5,temp_6,None)
                         clear()
-                        Customers_Interface.Account_Menu(account,customer)
+                        Customers_Interface.Loan_Menu(account,customer)
                 if not result:
                     print("Account ID not Found!")
                     pause()
@@ -695,11 +687,131 @@ class Customers_Interface:
         print("You will be directed to the Account Menu")
         pause()
         clear()
-        Customers_Interface.Account_Menu(account,customer)
+        temp_3 = str(account.import_type())
+        if temp_3 == "Loan":
+            Customers_Interface.Loan_Menu(account,customer)
+        else:
+            Customers_Interface.Account_Menu(account,customer)
         # except:
         #     print("Error")
         #     pause()
         #     clear()
+    
+    def Debt_Enquiry(account,customer):
+        print("|Debt Enquiry|")
+        temp_1 = account.import_account_id()
+        order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_1}\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+
+        for x in result:
+            temp_2 = x[0]
+        print("Your Debt : " + str(temp_2))
+        print("\nYou will be directed to Account Menu")
+        pause()
+        clear()
+        Customers_Interface.Loan_Menu(account,customer)
+
+    def Make_Loan(account,customer):
+        print("|Make Loan|")
+        temp_1 = int(input("Value: "))
+        if not temp_1 <0:
+            temp_2 = account.import_account_id()
+            order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
+            mycursor.execute(order)
+            result = mycursor.fetchall()
+            for x in result:
+                temp_3 = x[0]
+            temp_6 = temp_1
+            temp_1 = temp_1 + temp_3
+            
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_1}\') WHERE Account_ID = (\'{temp_2}\')' )
+            mydb.commit()
+
+            temp_4 = get_time()
+            temp_5 = "Make Loan"
+            order = f'insert into account_transactions values (\'{temp_2}\',\'{temp_4}\',\'{temp_5}\',\'{temp_6}\')'
+            mycursor.execute(order)
+            mydb.commit()
+
+            #Set Account Transaction Class
+            # acc_trans.balance_setter(temp_1)
+            # acc_trans.acc_id_setter(temp_2)
+            # acc_trans.date_setter(temp_4)
+            # temp_5 = "Deposit"
+            # acc_trans.trans_type_setter(temp_5)
+            # acc_trans.amount_setter(temp_1)
+            # acc_trans.save_to_database()
+            
+            print("\nLoaning Success")
+            print("You will be directed to Account Menu")
+            pause()
+            clear()
+            Customers_Interface.Loan_Menu(account,customer)
+        else:
+            print("You can't input negative value")
+            pause()
+            clear()
+            Customers_Interface.Make_Loan(account,customer)
+
+    def Pay_Off(account,customer):
+        print("|Pay Off|")
+        transaction = False
+        temp_1 = int(input("Value: "))
+        temp_1 = abs(temp_1)
+        temp_2 = account.import_account_id()
+
+        order = f'SELECT Balance FROM accounts WHERE Account_ID = \'{temp_2}\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+
+        for x in result:
+            temp_3 = x[0]
+
+        temp_3 = temp_3 - temp_1
+        if temp_3<0:
+            print("\nYou can't pay more than what you loan!")
+        elif temp_3 >= 0:
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_3}\') WHERE Account_ID = (\'{temp_2}\')')
+            mydb.commit()
+            transaction = True
+        else:
+            print("Error")
+        if transaction:
+            temp_4 = get_time()
+            temp_5 = "Loan Pay Off"
+            order = f'insert into account_transactions values (\'{temp_2}\',\'{temp_4}\',\'{temp_5}\',\'{temp_1}\')'
+            mycursor.execute(order)
+            mydb.commit()
+
+        print("\nPay Off Success")
+        print("You will be directed to Account Menu")
+        pause()
+        clear()
+        Customers_Interface.Loan_Menu(account,customer)
+
+    def Loan_Menu(account,customer):
+        try:
+            clear()
+            print("|Account Menu|")
+            Option = int(input("Choose the following option\n1. Loan | 2. Pay Off | 3. Loan Balance | 4. Transaction History |5. Back to Main Menu\n\nAnswer: "))
+            if Option == 1:
+                clear()
+                Customers_Interface.Make_Loan(account,customer)
+            elif Option == 2:
+                clear()
+                Customers_Interface.Pay_Off(account,customer)
+            elif Option == 3:
+                clear()
+                Customers_Interface.Debt_Enquiry(account,customer)
+            elif Option == 4:
+                clear()
+                Customers_Interface.Transaction_History(account,customer)
+            elif Option == 5:
+                Customers_Interface.Back_to_Main_Menu(account,customer)
+        except ValueError:
+            clear()
+            Customers_Interface.Loan_Menu(account,customer)
 
     def Account_Menu(account,customer):
         try:
@@ -770,7 +882,7 @@ class Admin_Interface:
             mycursor.execute(order)
             result_2 = mycursor.fetchall()
             if result_2:
-                order = f'DELETE FROM account_transaction WHERE account_transaction.Account_ID = \'{temp_1}\''
+                order = f'DELETE FROM account_transactions WHERE account_transactions.Account_ID = \'{temp_1}\''
                 mycursor.execute(order)
                 mydb.commit()
             order = f'DELETE FROM accounts WHERE accounts.Account_ID = \'{temp_1}\''
@@ -848,9 +960,54 @@ def Logout():
     clear()
     loop = False
     Login()
-    
+
+def loan_interest():
+    date = int(date_time())
+    clock = str(clock_time())
+    if date == 1 and clock == "00:00:00":
+        order = f'select Account_ID,Balance from accounts where Type  = \'Loan\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+        for x in result:
+            temp_1= x[0] #get acc id
+            temp_2= x[1] #get balance
+            temp_3 = temp_2*1.1
+            print(int(temp_3))
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_3}\') WHERE Account_ID = (\'{temp_1}\')' )
+            mydb.commit()
+
+            temp_4 = get_time()
+            temp_5 = "Interest"
+            temp_6 = temp_2*0.1
+            order = f'insert into account_transactions values (\'{temp_1}\',\'{temp_4}\',\'{temp_5}\',\'{temp_6}\')'
+            mycursor.execute(order)
+            mydb.commit()
+            
+def saving_interest():
+    date = int(date_time())
+    clock = str(clock_time())
+    if date == 1 and clock == "00:00:00":
+        order = f'select Account_ID,Balance from accounts where Type  = \'Saving\''
+        mycursor.execute(order)
+        result = mycursor.fetchall()
+        for x in result:
+            temp_1= x[0] #get acc id
+            temp_2= x[1] #get balance
+            temp_3 = temp_2*1.1
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_3}\') WHERE Account_ID = (\'{temp_1}\')' )
+            mydb.commit()
+
+            temp_4 = get_time()
+            temp_5 = "Interest"
+            temp_6 = temp_2*0.1
+            order = f'insert into account_transactions values (\'{temp_1}\',\'{temp_4}\',\'{temp_5}\',\'{temp_6}\')'
+            mycursor.execute(order)
+            mydb.commit()
+            
     
 if __name__ == "__main__":
     clear()
+    loan_interest()
+    saving_interest()
     Login()
 
