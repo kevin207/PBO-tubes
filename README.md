@@ -20,3 +20,4 @@ Transaksi yang dapat dilakukan antara lain:
 - Melakukan Peminjaman (Make Loan)
 - Melakukan Pelunasan (Pay Off)
 
+Pada loan dan saving account akan ada bunga sebesar 10% dari balanace yang ada pada akun tersebut untuk setiap bulan-nya. Pada akun loan balance adalah besar peminjaman yang dilakukan sedangkan pada akun saving dan checking, balance adalah jumlah tabungan yang dimiliki. Pada akun checking value balance dapat negatif karena pada akun checking dapat dilakukan overdraft (penarikan melebihi balance yang dimiliki akun) yang memiliki credit limit sebesar Rp. 10.000.000 
