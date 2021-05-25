@@ -17,6 +17,12 @@ def date_time():
     d3 = now.strftime("%d")
     return d3
 
+def month_time():
+    from datetime import datetime
+    now = datetime.now()
+    d3 = now.strftime("%d")
+    return d3
+
 def YMD_time():
     from datetime import datetime
     now = datetime.now()
@@ -982,6 +988,7 @@ def saving_interest():
 def loan_interest():
     YMD = str(YMD_time())
     date = int(date_time())
+    month = int(month_time())
     if date == 1:
         order = f'select Date from interest_refresh where Date like "%{YMD}%"'
         mycursor.execute(order)
@@ -1004,11 +1011,32 @@ def loan_interest():
                 mycursor.execute(order)
                 mydb.commit()
             saving_interest()
+            if month%3==0:
+                loan_deadline()
             time = get_time()
             order = f'insert into interest_refresh values (\'{time}\')'
             mycursor.execute(order)
             mydb.commit()
 
+def loan_deadline():
+    order = f'select Account_ID,Balance from accounts where Type  = \'Loan\''
+    mycursor.execute(order)
+    result = mycursor.fetchall()
+    for x in result:
+        temp_1= x[0] #get acc id
+        temp_2= x[1] #get balance
+        if not temp_2 == 0:
+            temp_3 = temp_2*1.2
+            mycursor.execute(f'UPDATE accounts set Balance = (\'{temp_3}\') WHERE Account_ID = (\'{temp_1}\')' )
+            mydb.commit()
+
+            temp_4 = get_time()
+            temp_5 = "Loan Penalty"
+            temp_6 = temp_2*0.2
+            order = f'insert into account_transactions values (\'{temp_1}\',\'{temp_4}\',\'{temp_5}\',\'{temp_6}\')'
+            mycursor.execute(order)
+            mydb.commit()
+          
 if __name__ == "__main__":
     clear()
     loan_interest()

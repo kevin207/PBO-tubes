@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 25, 2021 at 11:25 AM
+-- Generation Time: May 25, 2021 at 01:10 PM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 8.0.3
 
@@ -39,11 +39,9 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`Account_ID`, `Customer_ID`, `Type`, `Balance`) VALUES
-('ACCA1127', 'CS101567', 'Checking', 100000),
-('ACCA1183', 'CS101199', 'Checking', -8100000),
-('ACLA1365', 'CS101199', 'Loan', 73205),
-('ACLA1401', 'CS101199', 'Loan', 0),
-('ACSA1200', 'CS101199', 'Saving', 732050);
+('ACCA1007', 'CS101199', 'Checking', -100000),
+('ACLA1762', 'CS101199', 'Loan', 66000),
+('ACSA1866', 'CS101199', 'Saving', 110000);
 
 -- --------------------------------------------------------
 
@@ -63,34 +61,17 @@ CREATE TABLE `account_transactions` (
 --
 
 INSERT INTO `account_transactions` (`Account_ID`, `Date_Time`, `Transaction_Type`, `Amount`) VALUES
-('ACCA1183', '2021-05-23 15:45:42', 'Deposit', 1000000),
-('ACCA1183', '2021-05-23 15:45:52', 'Withdraw', 100000),
-('ACCA1183', '2021-05-23 15:46:14', 'Withdraw', 9000000),
-('ACSA1200', '2021-05-23 16:01:57', 'Deposit', 1000000),
-('ACSA1200', '2021-05-23 16:02:36', 'Withdraw', 500000),
-('ACCA1127', '2021-05-23 17:12:45', 'Deposit', 100000),
-('ACLA1401', '2021-05-23 18:15:57', 'Deposit', 100000),
-('ACLA1365', '2021-05-23 18:26:32', 'Interest', 0),
-('ACLA1401', '2021-05-23 18:26:32', 'Interest', 0),
-('ACLA1365', '2021-05-23 18:30:32', 'Interest', 5000),
-('ACLA1401', '2021-05-23 18:30:32', 'Interest', 10000),
-('ACSA1200', '2021-05-23 18:44:11', 'Interest', 50000),
-('ACLA1401', '2021-05-23 19:07:19', 'Loan Pay Off', 110000),
-('ACLA1401', '2021-05-23 19:07:41', 'Make Loan', 1000000),
-('ACLA1401', '2021-05-23 19:09:41', 'Make Loan', 10000),
-('ACLA1401', '2021-05-23 19:09:46', 'Loan Pay Off', 10000),
-('ACLA1401', '2021-05-23 19:13:19', 'Make Loan', 1100000),
-('ACLA1401', '2021-05-23 19:13:23', 'Loan Pay Off', 200000),
-('ACLA1401', '2021-05-23 19:14:22', 'Loan Pay Off', 1900000),
-('ACLA1365', '2021-05-25 16:13:56', 'Interest', 5500),
-('ACLA1401', '2021-05-25 16:13:56', 'Interest', 0),
-('ACSA1200', '2021-05-25 16:13:56', 'Interest', 55000),
-('ACLA1365', '2021-05-25 16:14:04', 'Interest', 6050),
-('ACLA1401', '2021-05-25 16:14:04', 'Interest', 0),
-('ACSA1200', '2021-05-25 16:14:04', 'Interest', 60500),
-('ACLA1365', '2021-05-25 16:21:02', 'Interest', 6655),
-('ACLA1401', '2021-05-25 16:21:02', 'Interest', 0),
-('ACSA1200', '2021-05-25 16:21:02', 'Interest', 66550);
+('ACCA1007', '2021-05-25 17:57:46', 'Deposit', 100000),
+('ACCA1007', '2021-05-25 17:58:11', 'Withdraw', 200000),
+('ACSA1866', '2021-05-25 17:59:05', 'Deposit', 1000000),
+('ACSA1866', '2021-05-25 17:59:18', 'Withdraw', 500000),
+('ACSA1866', '2021-05-25 17:59:30', 'Withdraw', 500000),
+('ACLA1762', '2021-05-25 18:00:13', 'Make Loan', 100000),
+('ACLA1762', '2021-05-25 18:00:20', 'Loan Pay Off', 50000),
+('ACSA1866', '2021-05-25 18:00:39', 'Deposit', 100000),
+('ACLA1762', '2021-05-25 18:01:05', 'Interest', 5000),
+('ACSA1866', '2021-05-25 18:01:05', 'Interest', 10000),
+('ACLA1762', '2021-05-25 18:01:05', 'Loan Penalty', 11000);
 
 -- --------------------------------------------------------
 
@@ -129,7 +110,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`Customer_ID`, `Name`, `Address`, `Phone`, `Email`) VALUES
-('CS101199', 'Bambang', 'Jakarta', '0812', 'Gmail'),
+('CS101199', 'Ihza Fajrur RH', 'Jakarta', '081292834124', 'ihzafrh@gmail.com'),
 ('CS101567', 'Budi', 'Depok', '0819', 'Gmail');
 
 -- --------------------------------------------------------
